@@ -63,26 +63,26 @@ You will need to hit escape to leave visual-mode."
 
 (defun evil-visualstar/begin-search (beg end direction)
   (when (evil-visual-state-p)
-    (evil-exit-visual-state)
-    (let ((found)
-          (selection (regexp-quote (buffer-substring-no-properties beg end))))
-      (if (eq evil-search-module 'isearch)
-          (progn
-            (setq isearch-forward direction)
-            (setq found (evil-search selection direction t)))
-        (let ((pattern (evil-ex-make-search-pattern selection))
-              (direction (if direction 'forward 'backward)))
-          (setq evil-ex-search-direction direction)
-          (setq evil-ex-search-pattern pattern)
-          (evil-ex-search-activate-highlight pattern)
-          ;; update search history unless this pattern equals the
-          ;; previous pattern
-          (unless (equal (car-safe evil-ex-search-history) selection)
-            (push selection evil-ex-search-history))
-          (evil-push-search-history selection (eq direction 'forward))
-          (setq found (evil-ex-search-next))))
-      (when (and evil-visualstar/persistent found)
-        (push-mark (+ (point) (- end beg)) nil t)))))
+    (evil-exit-visual-state))
+  (let ((found)
+        (selection (regexp-quote (buffer-substring-no-properties beg end))))
+    (if (eq evil-search-module 'isearch)
+        (progn
+          (setq isearch-forward direction)
+          (setq found (evil-search selection direction t)))
+      (let ((pattern (evil-ex-make-search-pattern selection))
+            (direction (if direction 'forward 'backward)))
+        (setq evil-ex-search-direction direction)
+        (setq evil-ex-search-pattern pattern)
+        (evil-ex-search-activate-highlight pattern)
+        ;; update search history unless this pattern equals the
+        ;; previous pattern
+        (unless (equal (car-safe evil-ex-search-history) selection)
+          (push selection evil-ex-search-history))
+        (evil-push-search-history selection (eq direction 'forward))
+        (setq found (evil-ex-search-next))))
+    (when (and evil-visualstar/persistent found)
+      (push-mark (+ (point) (- end beg)) nil t))))
 
 (evil-define-motion evil-visualstar/begin-search-forward (beg end)
   "Search for the visual selection forwards."
