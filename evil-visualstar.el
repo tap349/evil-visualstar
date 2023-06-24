@@ -61,11 +61,12 @@ You will need to hit escape to leave visual-mode."
   :group 'evil-visualstar
   :type 'boolean)
 
-(defun evil-visualstar/begin-search (beg end direction)
+(defun evil-visualstar/begin-search (beg end direction search-word)
   (when (evil-visual-state-p)
     (evil-exit-visual-state))
-  (let ((found)
-        (selection (regexp-quote (buffer-substring-no-properties beg end))))
+  (let* ((found)
+         (selection (regexp-quote (buffer-substring-no-properties beg end)))
+         (selection (if search-word (concat "\\<" selection "\\>") selection)))
     (if (eq evil-search-module 'isearch)
         (progn
           (setq isearch-forward direction)
@@ -89,14 +90,14 @@ You will need to hit escape to leave visual-mode."
   :jump t
   :repeat nil
   (interactive "<r>")
-  (evil-visualstar/begin-search beg end t))
+  (evil-visualstar/begin-search beg end t nil))
 
 (evil-define-motion evil-visualstar/begin-search-backward (beg end)
   "Search for the visual selection backwards."
   :jump t
   :repeat nil
   (interactive "<r>")
-  (evil-visualstar/begin-search beg end nil))
+  (evil-visualstar/begin-search beg end nil nil))
 
 ;;;###autoload
 (define-minor-mode evil-visualstar-mode
